@@ -91,11 +91,14 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        jUser.setText("gun");
         jUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jUserActionPerformed(evt);
             }
         });
+
+        jPass.setText("gun123");
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PNG/contacts.png"))); // NOI18N
 
@@ -169,7 +172,7 @@ public class Login extends javax.swing.JFrame {
 
     private void btnloginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnloginActionPerformed
         String user = jUser.getText();
-        String pass = jPass.getText();
+        String pass = String.valueOf(jPass.getPassword());
        try{
             String sql = "Select * From tb_pegawai where username ='"+user+"' AND password='"+pass+"'";
             ResultSet rs = stat.executeQuery(sql);

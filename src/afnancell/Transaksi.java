@@ -5,9 +5,11 @@
  */
 package afnancell;
 
+import java.awt.Color;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,21 +30,17 @@ public class Transaksi extends javax.swing.JFrame {
     ResultSet rs;
     Object row = new Object[5];
     PreparedStatement pst;
+
     public Transaksi() {
         initComponents();
-        DB DB = new DB();
-        DB.config();
-        con = DB.con;
-        stat = DB.stm;
-        setDate();
+        renderTable();
         comboBox();
         generateID();
         txtBayar.setText("0");
         txtTotal.setText("0");
         txtKembali.setText("0");
     }
-    
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -61,31 +59,28 @@ public class Transaksi extends javax.swing.JFrame {
         jTextField2 = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
         txtIdTransaksi = new javax.swing.JTextField();
-        txtHarga = new javax.swing.JTextField();
-        txtNamaBarang = new javax.swing.JTextField();
-        txtJumlah = new javax.swing.JTextField();
-        jLabel8 = new javax.swing.JLabel();
-        txtTanggal = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
+        jOperator = new javax.swing.JComboBox<>();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
         btnSave = new javax.swing.JButton();
-        btnHapus = new javax.swing.JButton();
-        jBarang = new javax.swing.JComboBox<>();
         btnSimpan = new javax.swing.JButton();
+        btnHapus = new javax.swing.JButton();
         btnExit = new javax.swing.JButton();
+        txtHarga = new javax.swing.JTextField();
+        txtJumlah = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        txtTotal = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        txtKembali = new javax.swing.JTextField();
-        txtTotal = new javax.swing.JTextField();
         txtBayar = new javax.swing.JTextField();
-        jPanel2 = new javax.swing.JPanel();
+        txtKembali = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
 
         hapus.setText("hapus");
         hapus.addActionListener(new java.awt.event.ActionListener() {
@@ -113,26 +108,9 @@ public class Transaksi extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("APLIKASI TRANSAKSI PULSA AFNAN CELL");
         setBackground(new java.awt.Color(0, 255, 204));
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("FORM TRANSAKSI PULSA");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(204, 11, -1, 14));
-
-        jLabel2.setText("Kode transaksi");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 46, -1, -1));
-
-        jLabel3.setText("Kode PULSA");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 86, -1, -1));
-
-        jLabel4.setText("Menu");
-        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 126, -1, -1));
-
-        jLabel5.setText("Harga");
-        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 166, 60, -1));
-
-        jLabel6.setText("Jumlah");
-        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 206, -1, -1));
 
         txtIdTransaksi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -144,57 +122,20 @@ public class Transaksi extends javax.swing.JFrame {
                 txtIdTransaksiKeyTyped(evt);
             }
         });
-        getContentPane().add(txtIdTransaksi, new org.netbeans.lib.awtextra.AbsoluteConstraints(132, 43, 170, -1));
-
-        txtHarga.setText(" ");
-        txtHarga.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtHargaKeyTyped(evt);
-            }
-        });
-        getContentPane().add(txtHarga, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 163, 169, -1));
-
-        txtNamaBarang.setText(" ");
-        txtNamaBarang.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtNamaBarangKeyPressed(evt);
-            }
-        });
-        getContentPane().add(txtNamaBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(62, 123, 535, -1));
-
-        txtJumlah.setText(" ");
-        txtJumlah.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtJumlahKeyTyped(evt);
-            }
-        });
-        getContentPane().add(txtJumlah, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 203, 169, -1));
-
-        jLabel8.setText("TANGGAL              :");
-        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(307, 46, -1, -1));
-
-        txtTanggal.setEditable(false);
-        txtTanggal.setText(" ");
-        txtTanggal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTanggalActionPerformed(evt);
-            }
-        });
-        getContentPane().add(txtTanggal, new org.netbeans.lib.awtextra.AbsoluteConstraints(427, 43, 170, -1));
 
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "KD_PULSA", "NAMA_OPERATOR", "HARGA", "JUMLAH", "SUB TOTAL"
+                "ID TRANSAKSI", "OPERATOR", "JUMLAH", "HARGA"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -210,9 +151,58 @@ public class Transaksi extends javax.swing.JFrame {
                 tableMouseReleased(evt);
             }
         });
+        table.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+                tableCaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+            }
+        });
         jScrollPane1.setViewportView(table);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 268, 585, 186));
+        jOperator.setBackground(new java.awt.Color(102, 255, 102));
+        jOperator.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "OPERATOR" }));
+        jOperator.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jOperatorItemStateChanged(evt);
+            }
+        });
+        jOperator.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jOperatorFocusGained(evt);
+            }
+        });
+        jOperator.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jOperatorMouseClicked(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jOperatorMouseReleased(evt);
+            }
+        });
+        jOperator.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                jOperatorComponentShown(evt);
+            }
+        });
+        jOperator.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jOperatorActionPerformed(evt);
+            }
+        });
+        jOperator.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jOperatorKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jOperatorKeyReleased(evt);
+            }
+        });
+
+        jPanel2.setBackground(new java.awt.Color(255, 153, 255));
+
+        jPanel3.setBackground(new java.awt.Color(255, 153, 255));
+        jPanel3.setLayout(new java.awt.GridLayout(1, 0, 5, 3));
 
         btnSave.setBackground(new java.awt.Color(204, 0, 204));
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PNG/Tambah.png"))); // NOI18N
@@ -222,7 +212,17 @@ public class Transaksi extends javax.swing.JFrame {
                 btnSaveActionPerformed(evt);
             }
         });
-        getContentPane().add(btnSave, new org.netbeans.lib.awtextra.AbsoluteConstraints(108, 472, -1, -1));
+        jPanel3.add(btnSave);
+
+        btnSimpan.setBackground(new java.awt.Color(255, 0, 255));
+        btnSimpan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PNG/Simpan.png"))); // NOI18N
+        btnSimpan.setText("Ubah");
+        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpanActionPerformed(evt);
+            }
+        });
+        jPanel3.add(btnSimpan);
 
         btnHapus.setBackground(new java.awt.Color(204, 0, 204));
         btnHapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PNG/Hapus2.png"))); // NOI18N
@@ -232,39 +232,7 @@ public class Transaksi extends javax.swing.JFrame {
                 btnHapusActionPerformed(evt);
             }
         });
-        getContentPane().add(btnHapus, new org.netbeans.lib.awtextra.AbsoluteConstraints(193, 472, -1, -1));
-
-        jBarang.setBackground(new java.awt.Color(102, 255, 102));
-        jBarang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "OPERATOR" }));
-        jBarang.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jBarangMouseClicked(evt);
-            }
-        });
-        jBarang.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBarangActionPerformed(evt);
-            }
-        });
-        jBarang.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jBarangKeyPressed(evt);
-            }
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                jBarangKeyReleased(evt);
-            }
-        });
-        getContentPane().add(jBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(133, 83, 169, -1));
-
-        btnSimpan.setBackground(new java.awt.Color(255, 0, 255));
-        btnSimpan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PNG/Simpan.png"))); // NOI18N
-        btnSimpan.setText("Simpan");
-        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSimpanActionPerformed(evt);
-            }
-        });
-        getContentPane().add(btnSimpan, new org.netbeans.lib.awtextra.AbsoluteConstraints(29, 472, -1, -1));
+        jPanel3.add(btnHapus);
 
         btnExit.setBackground(new java.awt.Color(204, 0, 204));
         btnExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PNG/Keluar2.png"))); // NOI18N
@@ -274,91 +242,280 @@ public class Transaksi extends javax.swing.JFrame {
                 btnExitActionPerformed(evt);
             }
         });
-        getContentPane().add(btnExit, new org.netbeans.lib.awtextra.AbsoluteConstraints(267, 472, -1, -1));
+        jPanel3.add(btnExit);
 
-        jLabel7.setText("Total");
-        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 520, 46, -1));
-
-        jLabel9.setText("Bayar");
-        getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 550, 46, -1));
-
-        jLabel10.setText("Kembali");
-        getContentPane().add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(368, 582, 46, -1));
-
-        txtKembali.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtKembaliActionPerformed(evt);
+        txtHarga.setText(" ");
+        txtHarga.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtHargaKeyTyped(evt);
             }
         });
-        getContentPane().add(txtKembali, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 580, 150, -1));
+
+        txtJumlah.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtJumlahKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtJumlahKeyTyped(evt);
+            }
+        });
+
+        jLabel6.setText("Jumlah");
+
+        jLabel5.setText("Harga");
+
+        jLabel3.setText("Operator");
+
+        jLabel2.setText("Kode transaksi");
 
         txtTotal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTotalActionPerformed(evt);
             }
         });
-        getContentPane().add(txtTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 520, 150, -1));
+
+        jLabel7.setText("Total");
+
+        jLabel9.setText("Bayar");
 
         txtBayar.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtBayarKeyPressed(evt);
             }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBayarKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtBayarKeyTyped(evt);
             }
         });
-        getContentPane().add(txtBayar, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 550, 150, -1));
 
-        jPanel2.setBackground(new java.awt.Color(255, 153, 255));
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 610, 640));
+        txtKembali.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtKembaliActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setText("Kembali");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(46, 46, 46)
+                                .addComponent(txtHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(26, 26, 26)
+                                .addComponent(txtKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(2, 2, 2)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(24, 24, 24)
+                                        .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(24, 24, 24)
+                                        .addComponent(txtBayar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGap(35, 35, 35))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(69, 69, 69)
+                                .addComponent(txtJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(46, 46, 46)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(28, 28, 28)
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtHarga, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel7)
+                            .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(8, 8, 8)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9)
+                            .addComponent(txtBayar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(8, 8, 8)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(2, 2, 2)
+                                .addComponent(jLabel10))
+                            .addComponent(txtKembali, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addGap(27, 27, 27)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(405, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 585, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(133, 133, 133)
+                .addComponent(jOperator, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(204, 204, 204)
+                .addComponent(jLabel1))
+            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(132, 132, 132)
+                .addComponent(txtIdTransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(268, 268, 268)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(83, 83, 83)
+                .addComponent(jOperator, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(11, 11, 11)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(txtIdTransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-    
-    private void comboBox(){
-        jBarang.removeAllItems();
-        String sql = "select * from tb_menu";
-        try{
+
+    private void comboBox() {
+        String sql = "select menu from tb_menu";
+        try {
+            DB DB = new DB();
+            DB.config();
+            con = DB.con;
+            stat = DB.stm;
             rs = stat.executeQuery(sql);
             while (rs.next()) {
-                String kode = rs.getString("id_menu");
-                jBarang.addItem(kode);
+                String kode = rs.getString(1);
+                jOperator.addItem(kode);
             }
-        }catch(Exception e){
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
+
+    private void renderTable() {
+        DefaultTableModel tabel = new DefaultTableModel();
+        tabel.addColumn("ID TRANSAKSI");
+        tabel.addColumn("ID MENU");
+        tabel.addColumn("JUMLAH");
+        tabel.addColumn("HARGA");
+        try {
+            DB DB = new DB();
+            DB.config();
+            con = DB.con;
+            stat = DB.stm;
+            rs = stat.executeQuery("Select * from tb_penjualan");
+            while (rs.next()) {
+                tabel.addRow(new Object[]{
+                    rs.getString(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4)
+                });
+                table.setModel(tabel);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
+
+    
+    private void selectData(){
+        int baris = table.getSelectedRow();
+        txtIdTransaksi.setText(table.getValueAt(baris, 0).toString());
+        jOperator.setSelectedItem(table.getValueAt(baris, 1).toString());
+        txtJumlah.setText(table.getValueAt(baris, 2).toString());
+        txtHarga.setText(table.getValueAt(baris, 3).toString());
+        int valTotal = Integer.parseInt(txtJumlah.getText()) * Integer.parseInt(txtHarga.getText());
+        txtTotal.setText(String.valueOf(valTotal));
+    }
+    
+    private void setTotalHarga(){
+        try {
+            int total = Integer.parseInt(txtJumlah.getText()) * Integer.parseInt(txtHarga.getText());
+            txtTotal.setText(String.valueOf(total));
+        } catch (NumberFormatException e) {
+            jLabel6.setForeground(Color.BLACK);
+        }
+    }
+    
+    private void setHarga(){
+        String provider = jOperator.getSelectedItem().toString();
+        try {
+            DB DB = new DB();
+            DB.config();
+            con = DB.con;
+            stat = DB.stm;
+            rs = stat.executeQuery(String.format("Select harga from tb_menu where menu = '%s'", provider));
+            while (rs.next()){
+                txtHarga.setText(rs.getString(1));
+            }
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }
     
-    private void setDate(){
-        LocalDateTime ld = LocalDateTime.now();
-        
-        DateTimeFormatter ldfor = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        String formattedDate = ld.format(ldfor);
-        txtTanggal.setText(formattedDate);
+    private void showInvalidNumberErrorMsg() {
+        JOptionPane.showMessageDialog(this, "Masukkan hanya angka. Coba lagi.", "Error", 0);
     }
-    
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
 
-        DefaultTableModel model  = (DefaultTableModel)table.getModel();
-        String kdb = (String)jBarang.getSelectedItem();
-        String namaBarang = txtNamaBarang.getText();
-        
-        String tempharju = txtHarga.getText();
-        int hargaJual = Integer.valueOf(tempharju.trim());
-        
-        String tempjumlah = txtJumlah.getText();
-        int jumlah = Integer.valueOf(tempjumlah.trim());
-        
-        int sub = hargaJual * jumlah;
-        
-        model.addRow(new Object[]{kdb.trim(),namaBarang.trim(),hargaJual,jumlah,sub});
-        
-        setTotal();
-        txtNamaBarang.setText("");
-        txtHarga.setText("");
-        txtJumlah.setText("");
-        
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        try {
+            DB DB = new DB();
+            DB.config();
+            con = DB.con;
+            String DetailBarang = String.format("Insert into tb_penjualan values ('%s', '%s', %s, %s)",
+                    txtIdTransaksi.getText(), jOperator.getSelectedItem().toString(), txtJumlah.getText(), txtHarga.getText());
+            pst = con.prepareStatement(DetailBarang);
+            pst.execute();
+            JOptionPane.showMessageDialog(this, "Data transaksi berhasil disimpan", "Success", JOptionPane.INFORMATION_MESSAGE);
+            hapusAll();
+            renderTable();
+            generateID();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void txtIdTransaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdTransaksiActionPerformed
@@ -366,139 +523,83 @@ public class Transaksi extends javax.swing.JFrame {
     }//GEN-LAST:event_txtIdTransaksiActionPerformed
 
     private void tableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseReleased
-        if(evt.isPopupTrigger()){
-            tablePop.show(table,evt.getX(),evt.getY());
-        }
+        selectData();
     }//GEN-LAST:event_tableMouseReleased
 
     private void hapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusActionPerformed
         DefaultTableModel model = (DefaultTableModel) table.getModel();
-        
+
         int selectRow = table.getSelectedRow();
         model.removeRow(selectRow);
         setTotal();
     }//GEN-LAST:event_hapusActionPerformed
 
     private void editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editActionPerformed
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-
-        int selectRow = table.getSelectedRow();
-
-        String j = model.getValueAt(selectRow, 3).toString();
-        String sub = model.getValueAt(selectRow, 4).toString();
         
-        String newJ = JOptionPane.showInputDialog(null, "Masukkan jumlah baru",j);
-        int newSub = Integer.parseInt(j)*Integer.parseInt(sub);
-                
-        model.setValueAt(newJ, selectRow, 3);
-        model.setValueAt(newSub, selectRow, 4);
-        setTotal();
     }//GEN-LAST:event_editActionPerformed
 
-    private void hapusAll(){
+    private void hapusAll() {
         txtIdTransaksi.setText("");
-        txtNamaBarang.setText("");
+        jOperator.setSelectedIndex(0);
         txtHarga.setText("");
         txtJumlah.setText("");
         jenisBayar.clearSelection();
-        
-        
-        DefaultTableModel dm = (DefaultTableModel) table.getModel();
-        int rowCount = dm.getRowCount();
-        //Remove rows one by one from the end of the table
-        for (int i = rowCount - 1; i >= 0; i--) {
-            dm.removeRow(i);
-        }
     }
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-        hapusAll();
+        try {
+            DB DB = new DB();
+            DB.config();
+            con = DB.con;
+            String DetailBarang = String.format("delete from tb_penjualan where id_transaksi = '%s'",
+                    txtIdTransaksi.getText());
+            pst = con.prepareStatement(DetailBarang);
+            pst.execute();
+            JOptionPane.showMessageDialog(this, "Data transaksi berhasil dihapus", "Success", JOptionPane.INFORMATION_MESSAGE);
+            hapusAll();
+            renderTable();
+            generateID();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void txtIdTransaksiKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIdTransaksiKeyTyped
         // only number
-        
+
     }//GEN-LAST:event_txtIdTransaksiKeyTyped
 
     private void txtHargaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtHargaKeyTyped
         // only number
-        if(!Character.isDigit(evt.getKeyChar())){
-            evt.consume();
-        } else {
-        }
+
     }//GEN-LAST:event_txtHargaKeyTyped
 
     private void txtJumlahKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtJumlahKeyTyped
         // only number
-        if(!Character.isDigit(evt.getKeyChar())){
-            evt.consume();
-        } else {
-        }
+
     }//GEN-LAST:event_txtJumlahKeyTyped
 
-    private void txtTanggalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTanggalActionPerformed
+    private void jOperatorKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jOperatorKeyPressed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtTanggalActionPerformed
 
-    private void jBarangKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jBarangKeyPressed
-        // TODO add your handling code here:
-        String kode = (String)jBarang.getSelectedItem();
-        String sql = "select * from tb_menu where id_menu='"+kode+"'";
-        try{
-            rs = stat.executeQuery(sql);
-            while (rs.next()) {
-                String nama = rs.getString("menu");
-                txtNamaBarang.setText(nama);
-                txtHarga.setText(rs.getString("harga"));
-            }
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
-    }//GEN-LAST:event_jBarangKeyPressed
-
-    private void txtNamaBarangKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNamaBarangKeyPressed
-        // TODO add your handling code here:
-        String kode = (String)jBarang.getSelectedItem();
-        String sql = "select * from tb_menu where id_menu='"+kode+"'";
-        try{
-            rs = stat.executeQuery(sql);
-            while (rs.next()) {
-                String nama = rs.getString("menu");
-                txtNamaBarang.setText(nama);
-                txtHarga.setText(rs.getString("harga"));
-            }
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
-    }//GEN-LAST:event_txtNamaBarangKeyPressed
-    private void clear(){
+    }//GEN-LAST:event_jOperatorKeyPressed
+    private void clear() {
         txtIdTransaksi.setText("");
     }
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
         // TODO add your handling code here:
-        int rows = table.getRowCount();
-        try{
-            String faktur = "insert into tb_transaksi values('"+txtIdTransaksi.getText()+"','"+txtTanggal.getText()+"')";
-            stat.executeUpdate(faktur);
-            JOptionPane.showMessageDialog(this,"Data Transaksi berhasil disimpan","Success",JOptionPane.INFORMATION_MESSAGE);
-            String DetailBarang = "Insert into tb_penjualan(id_transaksi,id_menu,jumlah,harga) values (?,?,?,?)";
+        try {
+            DB DB = new DB();
+            DB.config();
+            con = DB.con;
+            String DetailBarang = String.format("update tb_penjualan set id_menu = '%s', jumlah = %s, harga = %s where id_transaksi = '%s'",
+                    jOperator.getSelectedItem().toString(), txtJumlah.getText(), txtHarga.getText(), txtIdTransaksi.getText());
             pst = con.prepareStatement(DetailBarang);
-            for (int i = 0; i < rows; i++) {
-                String no = txtIdTransaksi.getText();
-                String barang = (String)table.getValueAt(i, 0);
-                Integer harga = (Integer)table.getValueAt(i, 2);
-                Integer qty = (Integer)table.getValueAt(i, 3);
-               
-                pst.setString(1, no);
-                pst.setString(2, barang);
-                pst.setInt(3, qty);
-                pst.setInt(4, harga);
-                pst.addBatch();
-            }
-            pst.executeBatch();
-            JOptionPane.showMessageDialog(this,"Data penjualan berhasil disimpan","Success",JOptionPane.INFORMATION_MESSAGE);
+            pst.execute();
+            JOptionPane.showMessageDialog(this, "Data transaksi berhasil diedit", "Success", JOptionPane.INFORMATION_MESSAGE);
             hapusAll();
+            renderTable();
             generateID();
-        }catch(Exception e){
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
@@ -509,52 +610,24 @@ public class Transaksi extends javax.swing.JFrame {
         new Login().setVisible(true);
     }//GEN-LAST:event_btnExitActionPerformed
 
-    private void jBarangKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jBarangKeyReleased
+    private void jOperatorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jOperatorKeyReleased
         // TODO add your handling code here:
-        String kode = (String)jBarang.getSelectedItem();
-        String sql = "select * from tb_menu where id_menu='"+kode+"'";
-        try{
-            rs = stat.executeQuery(sql);
-            while (rs.next()) {
-                String nama = rs.getString("menu");
-                txtNamaBarang.setText(nama);
-                txtHarga.setText(rs.getString("harga"));
-            }
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
-    }//GEN-LAST:event_jBarangKeyReleased
+      
+    }//GEN-LAST:event_jOperatorKeyReleased
 
-    private void jBarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBarangMouseClicked
+    private void jOperatorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jOperatorMouseClicked
         // TODO add your handling code here:
-        String kode = (String)jBarang.getSelectedItem();
-        String sql = "select * from tb_menu where id_menu='"+kode+"'";
-        try{
-            rs = stat.executeQuery(sql);
-            while (rs.next()) {
-                String nama = rs.getString("menu");
-                txtNamaBarang.setText(nama);
-                txtHarga.setText(rs.getString("harga"));
-            }
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
-    }//GEN-LAST:event_jBarangMouseClicked
+
+    }//GEN-LAST:event_jOperatorMouseClicked
 
     private void txtBayarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBayarKeyPressed
         // TODO add your handling code here:
-        int total = Integer.parseInt(txtTotal.getText());
-        int bayar = Integer.parseInt(txtBayar.getText());
-        int kembali = (total-bayar)*-1;
-        txtKembali.setText(Integer.toString(kembali));
+        
     }//GEN-LAST:event_txtBayarKeyPressed
 
     private void txtBayarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBayarKeyTyped
         // TODO add your handling code here:
-        int total = Integer.parseInt(txtTotal.getText());
-        int bayar = Integer.parseInt(txtBayar.getText());
-        int kembali = (total-bayar)*-1;
-        txtKembali.setText(Integer.toString(kembali));
+
     }//GEN-LAST:event_txtBayarKeyTyped
 
     private void txtTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTotalActionPerformed
@@ -565,9 +638,52 @@ public class Transaksi extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtKembaliActionPerformed
 
-    private void jBarangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBarangActionPerformed
+    private void jOperatorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jOperatorActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jBarangActionPerformed
+        setHarga();
+        setTotalHarga();
+    }//GEN-LAST:event_jOperatorActionPerformed
+
+    private void jOperatorMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jOperatorMouseReleased
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jOperatorMouseReleased
+
+    private void jOperatorFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jOperatorFocusGained
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_jOperatorFocusGained
+
+    private void jOperatorItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jOperatorItemStateChanged
+        // TODO add your handling code here:
+        
+
+
+    }//GEN-LAST:event_jOperatorItemStateChanged
+
+    private void jOperatorComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jOperatorComponentShown
+        // TODO add your handling code here:
+//        selectOperator();
+    }//GEN-LAST:event_jOperatorComponentShown
+
+    private void tableCaretPositionChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_tableCaretPositionChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tableCaretPositionChanged
+
+    private void txtJumlahKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtJumlahKeyReleased
+        // TODO add your handling code here:
+        setTotalHarga();
+    }//GEN-LAST:event_txtJumlahKeyReleased
+
+    private void txtBayarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBayarKeyReleased
+        // TODO add your handling code here:
+        try {
+            int kembali = Integer.parseInt(txtBayar.getText()) - Integer.parseInt(txtTotal.getText());
+            txtKembali.setText(String.valueOf(kembali));
+        } catch (NumberFormatException e) {
+            jLabel6.setForeground(Color.BLACK);
+        }
+    }//GEN-LAST:event_txtBayarKeyReleased
 
     /**
      * @param args the command line arguments
@@ -612,19 +728,18 @@ public class Transaksi extends javax.swing.JFrame {
     private javax.swing.JButton btnSimpan;
     private javax.swing.JMenuItem edit;
     private javax.swing.JMenuItem hapus;
-    private javax.swing.JComboBox<String> jBarang;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JComboBox<String> jOperator;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
@@ -637,27 +752,26 @@ public class Transaksi extends javax.swing.JFrame {
     private javax.swing.JTextField txtIdTransaksi;
     private javax.swing.JTextField txtJumlah;
     private javax.swing.JTextField txtKembali;
-    private javax.swing.JTextField txtNamaBarang;
-    private javax.swing.JTextField txtTanggal;
     private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 
     int i;
+
     private void generateID() {
         try {
-            String sql = "Select * FROM tb_transaksi ORDER BY id_penjualan DESC LIMIT 1";
+            String sql = "Select * FROM tb_penjualan ORDER BY id_transaksi DESC LIMIT 1";
             rs = stat.executeQuery(sql);
             rs.next();
-            String kode = rs.getString("id_penjualan");
+            String kode = rs.getString("id_transaksi");
             String subKode = kode.substring(3, 5);
             i = Integer.parseInt(subKode);
             i++;
             int no = i;
-            String tambahan="000";
+            String tambahan = "000";
             String Id = Integer.toString(no);
             int length = tambahan.length() - Id.length();
             String SubString = tambahan.substring(0, length);
-            txtIdTransaksi.setText("TR"+SubString+Id);
+            txtIdTransaksi.setText("TR" + SubString + Id);
         } catch (Exception e) {
             System.err.println(e);
             i++;
@@ -667,12 +781,12 @@ public class Transaksi extends javax.swing.JFrame {
             txtIdTransaksi.setText(id);
         }
     }
-    
-    private void setTotal(){
+
+    private void setTotal() {
         int total = 0;
-        for (int i = 0; i <table.getRowCount(); i++) {
-            int Amount = Integer.parseInt(table.getValueAt(i, 4)+"");
-            total = Amount+total;
+        for (int i = 0; i < table.getRowCount(); i++) {
+            int Amount = Integer.parseInt(table.getValueAt(i, 4) + "");
+            total = Amount + total;
         }
         txtTotal.setText(Integer.toString(total));
     }
